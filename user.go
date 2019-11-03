@@ -92,3 +92,17 @@ func (s *UserService) Update(ctx context.Context, name string, patches []*Patch)
 func (s *UserService) UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error) {
     return s.Update(ctx, "", patches)
 }
+
+func (s *UserService) ChangePassword(ctx context.Context, name string, newPassword string) (*StatusResponse, error) {
+    patch := []*Patch{
+        {
+            Op: "replace",
+            Path:  "/" + name,
+            Value: map[string]interface{}{
+                "password": newPassword,
+            },
+        },
+    }
+
+    return s.Update(ctx, name, patch)
+}
