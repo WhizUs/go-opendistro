@@ -1,8 +1,8 @@
 package opendistro
 
 import (
-    "context"
-    "net/http"
+	"context"
+	"net/http"
 )
 
 type UserService service
@@ -36,72 +36,72 @@ type User struct {
 func (s *UserService) Get(ctx context.Context, name string) (*User, error) {
 	endpoint := usersEndpoint + name
 
-    var users map[string]*User
+	var users map[string]*User
 
-    err := s.client.get(ctx, endpoint, &users)
-    if err != nil {
-        return nil, err
-    }
+	err := s.client.get(ctx, endpoint, &users)
+	if err != nil {
+		return nil, err
+	}
 
-    if users[name] == nil {
-        return nil, nil
-    }
+	if users[name] == nil {
+		return nil, nil
+	}
 
-    users[name].Name = name
+	users[name].Name = name
 
-    return users[name], nil
+	return users[name], nil
 }
 
 func (s *UserService) List(ctx context.Context) ([]*User, error) {
-    var users map[string]*User
+	var users map[string]*User
 
-    err := s.client.get(ctx, usersEndpoint, &users)
-    if err != nil {
-        return nil, err
-    }
+	err := s.client.get(ctx, usersEndpoint, &users)
+	if err != nil {
+		return nil, err
+	}
 
-    var _users []*User
+	var _users []*User
 
-    for name, user := range users {
-        user.Name = name
-        _users = append(_users, user)
-    }
+	for name, user := range users {
+		user.Name = name
+		_users = append(_users, user)
+	}
 
-    return _users, nil
+	return _users, nil
 }
 
 func (s *UserService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+	endpoint := usersEndpoint + name
 
-    return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
+	return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
 func (s *UserService) Create(ctx context.Context, name string, userCreate *UserCreate) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+	endpoint := usersEndpoint + name
 
-    return s.client.modify(ctx, endpoint, http.MethodPut, &userCreate)
+	return s.client.modify(ctx, endpoint, http.MethodPut, &userCreate)
 }
 
 func (s *UserService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+	endpoint := usersEndpoint + name
 
-    return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
+	return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }
 
 func (s *UserService) UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error) {
-    return s.Update(ctx, "", patches)
+	return s.Update(ctx, "", patches)
 }
 
 func (s *UserService) ChangePassword(ctx context.Context, name string, newPassword string) (*StatusResponse, error) {
-    patch := []*Patch{
-        {
-            Op: "replace",
-            Path:  "/" + name,
-            Value: map[string]interface{}{
-                "password": newPassword,
-            },
-        },
-    }
+	patch := []*Patch{
+		{
+			Op:   "replace",
+			Path: "/" + name,
+			Value: map[string]interface{}{
+				"password": newPassword,
+			},
+		},
+	}
 
-    return s.Update(ctx, name, patch)
+	return s.Update(ctx, name, patch)
 }

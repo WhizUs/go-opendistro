@@ -27,12 +27,12 @@ type ClientConfig struct {
 }
 
 type TLSConfig struct {
-	CACert string
-	CAPath string
-	ClientCert string
-	ClientKey string
+	CACert        string
+	CAPath        string
+	ClientCert    string
+	ClientKey     string
 	TLSServerName string
-	Insecure bool
+	Insecure      bool
 }
 
 type service struct {
@@ -194,4 +194,3 @@ func (c *Client) modify(ctx context.Context, path string, method string, reqByte
 
 	return sr, nil
 }
-
