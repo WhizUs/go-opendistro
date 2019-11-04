@@ -68,19 +68,19 @@ func (s *RolesmappingService) List(ctx context.Context) ([]*RoleMapping, error) 
 }
 
 func (s *RolesmappingService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := rolesMappingEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
 func (s *RolesmappingService) Create(ctx context.Context, name string, roleMappingRelations *RoleMappingRelations) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := rolesMappingEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodPut, &roleMappingRelations)
 }
 
 func (s *RolesmappingService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := rolesMappingEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }

@@ -58,20 +58,20 @@ func (s *ActiongroupService) List(ctx context.Context) ([]*Actiongroup, error) {
 }
 
 func (s *ActiongroupService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := actiongroupEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
 //@todo
 func (s *ActiongroupService) Create(ctx context.Context, name string) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := actiongroupEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodPut, nil)
 }
 
 func (s *ActiongroupService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := actiongroupEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }

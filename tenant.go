@@ -58,20 +58,20 @@ func (s *TenantService) List(ctx context.Context) ([]*Tenant, error) {
 }
 
 func (s *TenantService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := tenantEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
 //@todo
 func (s *TenantService) Create(ctx context.Context, name string) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := tenantEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodPut, nil)
 }
 
 func (s *TenantService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
-    endpoint := usersEndpoint + name
+    endpoint := tenantEndpoint + name
 
     return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }
