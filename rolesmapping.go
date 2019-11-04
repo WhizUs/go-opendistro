@@ -10,10 +10,10 @@ type RolesmappingService service
 type RolesmappingServiceInterface interface {
 	Get(ctx context.Context, name string) (*RoleMapping, error)
 	List(ctx context.Context) ([]*RoleMapping, error)
-	Create(ctx context.Context, name string) (*StatusResponse, error)
-	Delete(ctx context.Context, name string) (*StatusResponse, error)
-	Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error)
-	UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error)
+	Create(ctx context.Context, name string, roleMappingRelations *RoleMappingRelations) error
+	Delete(ctx context.Context, name string) error
+	Update(ctx context.Context, name string, patches []*Patch) error
+	UpdateBatch(ctx context.Context, patches []*Patch) error
 }
 
 type RoleMapping struct {
@@ -67,24 +67,24 @@ func (s *RolesmappingService) List(ctx context.Context) ([]*RoleMapping, error) 
 	return _rolemappings, nil
 }
 
-func (s *RolesmappingService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
+func (s *RolesmappingService) Delete(ctx context.Context, name string) error {
 	endpoint := rolesMappingEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
-func (s *RolesmappingService) Create(ctx context.Context, name string, roleMappingRelations *RoleMappingRelations) (*StatusResponse, error) {
+func (s *RolesmappingService) Create(ctx context.Context, name string, roleMappingRelations *RoleMappingRelations) error {
 	endpoint := rolesMappingEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPut, &roleMappingRelations)
 }
 
-func (s *RolesmappingService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
+func (s *RolesmappingService) Update(ctx context.Context, name string, patches []*Patch) error {
 	endpoint := rolesMappingEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }
 
-func (s *RolesmappingService) UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error) {
+func (s *RolesmappingService) UpdateBatch(ctx context.Context, patches []*Patch) error {
 	return s.Update(ctx, "", patches)
 }

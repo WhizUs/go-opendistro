@@ -1,0 +1,56 @@
+package opendistro
+
+import "strings"
+
+type status string
+
+type statusList struct {
+	Error     status
+	Forbidden status
+	Created   status
+	Ok        status
+	NotFound  status
+}
+
+type StatusError struct {
+	message string
+}
+
+var Status = &statusList{
+	Error:     "error",
+	Forbidden: "FORBIDDEN",
+	Created:   "CREATED",
+	Ok:        "OK",
+	NotFound:  "NOT_FOUND",
+}
+
+type statusResponse struct {
+	Status      *string            `json:"status"`
+	Message     *string            `json:"message"`
+	Reason      *string            `json:"reason"`
+	InvalidKeys *map[string]string `json:"invalid_keys"`
+}
+
+func NewStatusError(reason string, invalidKeys map[string]string) *StatusError {
+	if &reason == nil {
+		return &StatusError{
+			message: "Unknown reason ¯\\_(ツ)_/¯",
+		}
+	}
+
+	if invalidKeys != nil {
+		reason = reason + " invalid keys: "
+
+		keys := make([]string, 0, len(invalidKeys))
+		for _, key := range invalidKeys {
+			keys = append(keys, key)
+		}
+		reason = reason + strings.Join(keys, ", ")
+	}
+
+	return &StatusError{message: reason}
+}
+
+func (e StatusError) Error() string {
+	return e.message
+}

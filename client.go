@@ -48,13 +48,9 @@ type Client struct {
 
 	Users        *UserService
 	Roles        RoleServiceInterface
-	Rolesmapping *RolesmappingService
-	Actiongroups *ActiongroupService
-}
-
-type StatusResponse struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
+	Rolesmapping RolesmappingServiceInterface
+	Actiongroups ActiongroupServiceInterface
+	Tenants      TenantServiceInterface
 }
 
 type Patch struct {
@@ -104,6 +100,7 @@ func NewClient(config *ClientConfig) (*Client, error) {
 	c.Roles = (*RoleService)(&c.common)
 	c.Rolesmapping = (*RolesmappingService)(&c.common)
 	c.Actiongroups = (*ActiongroupService)(&c.common)
+	c.Tenants = (*TenantService)(&c.common)
 
 	return c, nil
 }
@@ -179,18 +176,22 @@ func (c *Client) get(ctx context.Context, path string, T interface{}) error {
 	return nil
 }
 
-func (c *Client) modify(ctx context.Context, path string, method string, reqBytes interface{}) (*StatusResponse, error) {
+func (c *Client) modify(ctx context.Context, path string, method string, reqBytes interface{}) error {
 	body, err := c.Do(ctx, reqBytes, path, method)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var sr *StatusResponse
+	var sr *statusResponse
 
 	err = json.Unmarshal(body, &sr)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return sr, nil
+	if sr.Status != nil && *sr.Status == string(Status.Error) {
+		return NewStatusError(*sr.Reason, *sr.InvalidKeys)
+	}
+
+	return nil
 }

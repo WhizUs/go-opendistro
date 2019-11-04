@@ -10,10 +10,10 @@ type ActiongroupService service
 type ActiongroupServiceInterface interface {
 	Get(ctx context.Context, name string) (*Actiongroup, error)
 	List(ctx context.Context) ([]*Actiongroup, error)
-	Create(ctx context.Context, name string) (*StatusResponse, error)
-	Delete(ctx context.Context, name string) (*StatusResponse, error)
-	Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error)
-	UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error)
+	Create(ctx context.Context, name string) error
+	Delete(ctx context.Context, name string) error
+	Update(ctx context.Context, name string, patches []*Patch) error
+	UpdateBatch(ctx context.Context, patches []*Patch) error
 }
 
 type Actiongroup struct {
@@ -57,25 +57,25 @@ func (s *ActiongroupService) List(ctx context.Context) ([]*Actiongroup, error) {
 	return _actiongroups, nil
 }
 
-func (s *ActiongroupService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
+func (s *ActiongroupService) Delete(ctx context.Context, name string) error {
 	endpoint := actiongroupEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
 //@todo
-func (s *ActiongroupService) Create(ctx context.Context, name string) (*StatusResponse, error) {
+func (s *ActiongroupService) Create(ctx context.Context, name string) error {
 	endpoint := actiongroupEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPut, nil)
 }
 
-func (s *ActiongroupService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
+func (s *ActiongroupService) Update(ctx context.Context, name string, patches []*Patch) error {
 	endpoint := actiongroupEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }
 
-func (s *ActiongroupService) UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error) {
+func (s *ActiongroupService) UpdateBatch(ctx context.Context, patches []*Patch) error {
 	return s.Update(ctx, "", patches)
 }

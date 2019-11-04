@@ -10,10 +10,10 @@ type RoleService service
 type RoleServiceInterface interface {
 	Get(ctx context.Context, name string) (*Role, error)
 	List(ctx context.Context) ([]*Role, error)
-	Create(ctx context.Context, name string, rolePermissions *RolePermissions) (*StatusResponse, error)
-	Delete(ctx context.Context, name string) (*StatusResponse, error)
-	Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error)
-	UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error)
+	Create(ctx context.Context, name string, rolePermissions *RolePermissions) error
+	Delete(ctx context.Context, name string) error
+	Update(ctx context.Context, name string, patches []*Patch) error
+	UpdateBatch(ctx context.Context, patches []*Patch) error
 }
 
 type Role struct {
@@ -89,24 +89,24 @@ func (s *RoleService) List(ctx context.Context) ([]*Role, error) {
 	return _roles, nil
 }
 
-func (s *RoleService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
+func (s *RoleService) Delete(ctx context.Context, name string) error {
 	endpoint := rolesEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
-func (s *RoleService) Create(ctx context.Context, name string, rolePermissions *RolePermissions) (*StatusResponse, error) {
+func (s *RoleService) Create(ctx context.Context, name string, rolePermissions *RolePermissions) error {
 	endpoint := rolesEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPut, &rolePermissions)
 }
 
-func (s *RoleService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
+func (s *RoleService) Update(ctx context.Context, name string, patches []*Patch) error {
 	endpoint := rolesEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }
 
-func (s *RoleService) UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error) {
+func (s *RoleService) UpdateBatch(ctx context.Context, patches []*Patch) error {
 	return s.Update(ctx, "", patches)
 }

@@ -10,10 +10,10 @@ type TenantService service
 type TenantServiceInterface interface {
 	Get(ctx context.Context, name string) (*Tenant, error)
 	List(ctx context.Context) ([]*Tenant, error)
-	Create(ctx context.Context, name string) (*StatusResponse, error)
-	Delete(ctx context.Context, name string) (*StatusResponse, error)
-	Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error)
-	UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error)
+	Create(ctx context.Context, name string) error
+	Delete(ctx context.Context, name string) error
+	Update(ctx context.Context, name string, patches []*Patch) error
+	UpdateBatch(ctx context.Context, patches []*Patch) error
 }
 
 type Tenant struct {
@@ -57,25 +57,25 @@ func (s *TenantService) List(ctx context.Context) ([]*Tenant, error) {
 	return _tenants, nil
 }
 
-func (s *TenantService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
+func (s *TenantService) Delete(ctx context.Context, name string) error {
 	endpoint := tenantEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
 //@todo
-func (s *TenantService) Create(ctx context.Context, name string) (*StatusResponse, error) {
+func (s *TenantService) Create(ctx context.Context, name string) error {
 	endpoint := tenantEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPut, nil)
 }
 
-func (s *TenantService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
+func (s *TenantService) Update(ctx context.Context, name string, patches []*Patch) error {
 	endpoint := tenantEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }
 
-func (s *TenantService) UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error) {
+func (s *TenantService) UpdateBatch(ctx context.Context, patches []*Patch) error {
 	return s.Update(ctx, "", patches)
 }

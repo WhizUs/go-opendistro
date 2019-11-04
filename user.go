@@ -10,10 +10,10 @@ type UserService service
 type UserServiceInterface interface {
 	Get(ctx context.Context, name string) (*User, error)
 	List(ctx context.Context) ([]*User, error)
-	Create(ctx context.Context, name string, userCreate *UserCreate) (*StatusResponse, error)
-	Delete(ctx context.Context, name string) (*StatusResponse, error)
-	Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error)
-	UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error)
+	Create(ctx context.Context, name string, userCreate *UserCreate) error
+	Delete(ctx context.Context, name string) error
+	Update(ctx context.Context, name string, patches []*Patch) error
+	UpdateBatch(ctx context.Context, patches []*Patch) error
 }
 
 type UserCreate struct {
@@ -70,29 +70,29 @@ func (s *UserService) List(ctx context.Context) ([]*User, error) {
 	return _users, nil
 }
 
-func (s *UserService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
+func (s *UserService) Delete(ctx context.Context, name string) error {
 	endpoint := usersEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
-func (s *UserService) Create(ctx context.Context, name string, userCreate *UserCreate) (*StatusResponse, error) {
+func (s *UserService) Create(ctx context.Context, name string, userCreate *UserCreate) error {
 	endpoint := usersEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPut, &userCreate)
 }
 
-func (s *UserService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
+func (s *UserService) Update(ctx context.Context, name string, patches []*Patch) error {
 	endpoint := usersEndpoint + name
 
 	return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }
 
-func (s *UserService) UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error) {
+func (s *UserService) UpdateBatch(ctx context.Context, patches []*Patch) error {
 	return s.Update(ctx, "", patches)
 }
 
-func (s *UserService) ChangePassword(ctx context.Context, name string, newPassword string) (*StatusResponse, error) {
+func (s *UserService) ChangePassword(ctx context.Context, name string, newPassword string) error {
 	patch := []*Patch{
 		{
 			Op:   "replace",
