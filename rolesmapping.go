@@ -1,8 +1,8 @@
 package opendistro
 
 import (
-    "context"
-    "net/http"
+	"context"
+	"net/http"
 )
 
 type RolesmappingService service
@@ -33,58 +33,58 @@ type RoleMappingRelations struct {
 func (s *RolesmappingService) Get(ctx context.Context, name string) (*RoleMapping, error) {
 	endpoint := rolesMappingEndpoint + name
 
-    var rolemappings map[string]*RoleMapping
+	var rolemappings map[string]*RoleMapping
 
-    err := s.client.get(ctx, endpoint, &rolemappings)
-    if err != nil {
-        return nil, err
-    }
+	err := s.client.get(ctx, endpoint, &rolemappings)
+	if err != nil {
+		return nil, err
+	}
 
-    if rolemappings[name] == nil {
-        return nil, nil
-    }
+	if rolemappings[name] == nil {
+		return nil, nil
+	}
 
-    rolemappings[name].Name = name
+	rolemappings[name].Name = name
 
-    return rolemappings[name], nil
+	return rolemappings[name], nil
 }
 
 func (s *RolesmappingService) List(ctx context.Context) ([]*RoleMapping, error) {
-    var rolemappings map[string]*RoleMapping
+	var rolemappings map[string]*RoleMapping
 
-    err := s.client.get(ctx, rolesMappingEndpoint, &rolemappings)
-    if err != nil {
-        return nil, err
-    }
+	err := s.client.get(ctx, rolesMappingEndpoint, &rolemappings)
+	if err != nil {
+		return nil, err
+	}
 
-    var _rolemappings []*RoleMapping
+	var _rolemappings []*RoleMapping
 
-    for name, rolemapping := range rolemappings {
-        rolemapping.Name = name
-        _rolemappings = append(_rolemappings, rolemapping)
-    }
+	for name, rolemapping := range rolemappings {
+		rolemapping.Name = name
+		_rolemappings = append(_rolemappings, rolemapping)
+	}
 
-    return _rolemappings, nil
+	return _rolemappings, nil
 }
 
 func (s *RolesmappingService) Delete(ctx context.Context, name string) (*StatusResponse, error) {
-    endpoint := rolesMappingEndpoint + name
+	endpoint := rolesMappingEndpoint + name
 
-    return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
+	return s.client.modify(ctx, endpoint, http.MethodDelete, nil)
 }
 
 func (s *RolesmappingService) Create(ctx context.Context, name string, roleMappingRelations *RoleMappingRelations) (*StatusResponse, error) {
-    endpoint := rolesMappingEndpoint + name
+	endpoint := rolesMappingEndpoint + name
 
-    return s.client.modify(ctx, endpoint, http.MethodPut, &roleMappingRelations)
+	return s.client.modify(ctx, endpoint, http.MethodPut, &roleMappingRelations)
 }
 
 func (s *RolesmappingService) Update(ctx context.Context, name string, patches []*Patch) (*StatusResponse, error) {
-    endpoint := rolesMappingEndpoint + name
+	endpoint := rolesMappingEndpoint + name
 
-    return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
+	return s.client.modify(ctx, endpoint, http.MethodPatch, &patches)
 }
 
 func (s *RolesmappingService) UpdateBatch(ctx context.Context, patches []*Patch) (*StatusResponse, error) {
-    return s.Update(ctx, "", patches)
+	return s.Update(ctx, "", patches)
 }
