@@ -2,7 +2,6 @@ package opendistro
 
 import (
     "context"
-    "fmt"
     "net/http"
 )
 
@@ -32,7 +31,7 @@ func (s *TenantService) Get(ctx context.Context, name string) (*Tenant, error) {
     }
 
     if tenants[name] == nil {
-        return nil, fmt.Errorf("get tenant: %s not in response", name)
+        return nil, nil
     }
 
     tenants[name].Name = name

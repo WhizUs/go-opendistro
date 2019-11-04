@@ -2,7 +2,6 @@ package opendistro
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 )
 
@@ -64,7 +63,7 @@ func (s *RoleService) Get(ctx context.Context, name string) (*Role, error) {
 	}
 
 	if roles[name] == nil {
-		return nil, fmt.Errorf("get role: %s not in response", name)
+		return nil, nil
 	}
 
 	roles[name].Name = name

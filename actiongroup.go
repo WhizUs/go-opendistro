@@ -2,7 +2,6 @@ package opendistro
 
 import (
     "context"
-    "fmt"
     "net/http"
 )
 
@@ -32,7 +31,7 @@ func (s *ActiongroupService) Get(ctx context.Context, name string) (*Actiongroup
     }
 
     if actiongroups[name] == nil {
-        return nil, fmt.Errorf("get actiongroup: %s not in response", name)
+        return nil, nil
     }
 
     actiongroups[name].Name = name

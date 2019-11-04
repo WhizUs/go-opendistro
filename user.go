@@ -2,7 +2,6 @@ package opendistro
 
 import (
     "context"
-    "fmt"
     "net/http"
 )
 
@@ -45,7 +44,7 @@ func (s *UserService) Get(ctx context.Context, name string) (*User, error) {
     }
 
     if users[name] == nil {
-        return nil, fmt.Errorf("get user: %s not in response", name)
+        return nil, nil
     }
 
     users[name].Name = name

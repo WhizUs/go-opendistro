@@ -141,6 +141,10 @@ func (c *Client) Do(ctx context.Context, reqBytes interface{}, endpoint string, 
 		return nil, err
 	}
 
+	if resp.StatusCode == 404 {
+		return nil, nil
+	}
+
 	defer func() {
 		err := resp.Body.Close()
 		if err != nil {
@@ -161,6 +165,10 @@ func (c *Client) get(ctx context.Context, path string, T interface{}) error {
 	body, err := c.Do(ctx, nil, path, http.MethodGet)
 	if err != nil {
 		return err
+	}
+
+	if body == nil {
+		return nil
 	}
 
 	err = json.Unmarshal(body, &T)
