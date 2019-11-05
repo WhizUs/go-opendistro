@@ -1,4 +1,9 @@
-package opendistro
+// Copyright 2019 WhizUs GmbH. All rights reserved.
+//
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
+package common
 
 import "strings"
 
@@ -24,7 +29,7 @@ var Status = &statusList{
 	NotFound:  "NOT_FOUND",
 }
 
-type statusResponse struct {
+type StatusResponse struct {
 	Status      *string            `json:"status"`
 	Message     *string            `json:"message"`
 	Reason      *string            `json:"reason"`

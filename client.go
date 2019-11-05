@@ -1,3 +1,8 @@
+// Copyright 2019 WhizUs GmbH. All rights reserved.
+//
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
 package opendistro
 
 import (
@@ -5,19 +10,13 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"github.com/WhizUs/go-opendistro/common"
+	"github.com/WhizUs/go-opendistro/security"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/go-rootcerts"
 	"io/ioutil"
 	"log"
 	"net/http"
-)
-
-const (
-	usersEndpoint        = "/_opendistro/_security/api/internalusers/"
-	rolesEndpoint        = "/_opendistro/_security/api/roles/"
-	rolesMappingEndpoint = "/_opendistro/_security/api/rolesmapping/"
-	actiongroupEndpoint  = "/_opendistro/_security/api/actiongroups/"
-	tenantEndpoint       = "/_opendistro/_security/api/tenants/"
 )
 
 type ClientConfig struct {
@@ -35,28 +34,22 @@ type TLSConfig struct {
 	Insecure      bool
 }
 
-type service struct {
-	client *Client
-}
-
 type Client struct {
-	client *retryablehttp.Client
+	Client *retryablehttp.Client
 
 	Username, Password, BaseURL string
 
-	common service
+	common common.Service
 
-	Users        *UserService
-	Roles        RoleServiceInterface
-	Rolesmapping RolesmappingServiceInterface
-	Actiongroups ActiongroupServiceInterface
-	Tenants      TenantServiceInterface
+	Security securityClient
 }
 
-type Patch struct {
-	Op    string      `json:"op"`
-	Path  string      `json:"path"`
-	Value interface{} `json:"value"`
+type securityClient struct {
+	Users        security.UserServiceInterface
+	Roles        security.RoleServiceInterface
+	Rolesmapping security.RolesmappingServiceInterface
+	Actiongroups security.ActiongroupServiceInterface
+	Tenants      security.TenantServiceInterface
 }
 
 func NewClient(config *ClientConfig) (*Client, error) {
@@ -89,20 +82,36 @@ func NewClient(config *ClientConfig) (*Client, error) {
 	}
 
 	c := &Client{
-		client:   rc,
+		Client:   rc,
 		Username: config.Username,
 		Password: config.Password,
 		BaseURL:  config.BaseURL,
 	}
 
-	c.common.client = c
-	c.Users = (*UserService)(&c.common)
-	c.Roles = (*RoleService)(&c.common)
-	c.Rolesmapping = (*RolesmappingService)(&c.common)
-	c.Actiongroups = (*ActiongroupService)(&c.common)
-	c.Tenants = (*TenantService)(&c.common)
+	c.common.Client = c
+
+	c.Security = securityClient{
+		//Users:        (*security.UserService)(&c.common),
+		Users:        (*security.UserService)(&c.common),
+		Roles:        (*security.RoleService)(&c.common),
+		Rolesmapping: (*security.RolesmappingService)(&c.common),
+		Actiongroups: (*security.ActiongroupService)(&c.common),
+		Tenants:      (*security.TenantService)(&c.common),
+	}
+
+	/*
+		c.Users = (*security.UserService)(&c.common)
+		c.Roles = (*security.RoleService)(&c.common)
+		c.Rolesmapping = (*security.RolesmappingService)(&c.common)
+		c.Actiongroups = (*security.ActiongroupService)(&c.common)
+		c.Tenants = (*security.TenantService)(&c.common)
+	*/
 
 	return c, nil
+}
+
+func (c *Client) GetBaseURL() string {
+	return c.BaseURL
 }
 
 func (c *Client) Do(ctx context.Context, reqBytes interface{}, endpoint string, method string) ([]byte, error) {
@@ -115,12 +124,12 @@ func (c *Client) Do(ctx context.Context, reqBytes interface{}, endpoint string, 
 			return nil, err
 		}
 
-		req, err = http.NewRequest(method, c.common.client.BaseURL+endpoint, bytes.NewReader(_reqBytes))
+		req, err = http.NewRequest(method, c.common.Client.GetBaseURL()+endpoint, bytes.NewReader(_reqBytes))
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		req, err = http.NewRequest(method, c.common.client.BaseURL+endpoint, nil)
+		req, err = http.NewRequest(method, c.common.Client.GetBaseURL()+endpoint, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -133,7 +142,7 @@ func (c *Client) Do(ctx context.Context, reqBytes interface{}, endpoint string, 
 	retryableReq.Header.Add("Content-Type", "application/json")
 	retryableReq.SetBasicAuth(c.Username, c.Password)
 
-	resp, err := c.client.Do(retryableReq.WithContext(ctx))
+	resp, err := c.Client.Do(retryableReq.WithContext(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +167,7 @@ func (c *Client) Do(ctx context.Context, reqBytes interface{}, endpoint string, 
 	return body, nil
 }
 
-func (c *Client) get(ctx context.Context, path string, T interface{}) error {
+func (c *Client) Get(ctx context.Context, path string, T interface{}) error {
 	body, err := c.Do(ctx, nil, path, http.MethodGet)
 	if err != nil {
 		return err
@@ -176,21 +185,21 @@ func (c *Client) get(ctx context.Context, path string, T interface{}) error {
 	return nil
 }
 
-func (c *Client) modify(ctx context.Context, path string, method string, reqBytes interface{}) error {
+func (c *Client) Modify(ctx context.Context, path string, method string, reqBytes interface{}) error {
 	body, err := c.Do(ctx, reqBytes, path, method)
 	if err != nil {
 		return err
 	}
 
-	var sr *statusResponse
+	var sr *common.StatusResponse
 
 	err = json.Unmarshal(body, &sr)
 	if err != nil {
 		return err
 	}
 
-	if sr.Status != nil && *sr.Status == string(Status.Error) {
-		return NewStatusError(*sr.Reason, *sr.InvalidKeys)
+	if sr.Status != nil && *sr.Status == string(common.Status.Error) {
+		return common.NewStatusError(*sr.Reason, *sr.InvalidKeys)
 	}
 
 	return nil
