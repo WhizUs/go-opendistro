@@ -14,7 +14,7 @@ TODO
 
 ## Contributing
 
-The main purpose of this repository it to create and evolve a working opendistro client for go. We are grateful for anyone in the community support this client by writting, debugging or improve the code.
+The main purpose of this repository it to create and evolve a working opendistro client for go. We are grateful for anyone in the community support this client by writing, debugging or improve the code.
 
 For further information have a look into our full [Contribution Guide](CONTRIBUTING.md).
 
