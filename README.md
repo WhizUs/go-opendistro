@@ -1,4 +1,4 @@
-# go-opendistro [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/WhizUs/go-opendistro/blob/master/LICENSE) [![Travis CI](https://api.travis-ci.org/micro/go-micro.svg?branch=master)](https://travis-ci.org/micro/go-micro) [![Go Report Card](https://goreportcard.com/badge/github.com/WhizUs/go-opendistro)](https://goreportcard.com/report/github.com/WhizUs/go-opendistro)
+# go-opendistro [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/WhizUs/go-opendistro/blob/master/LICENSE) [![Travis CI](https://api.travis-ci.org/micro/go-micro.svg?branch=master)](https://travis-ci.org/micro/go-micro) [![Go Report Card](https://goreportcard.com/badge/github.com/WhizUs/go-opendistro)](https://goreportcard.com/report/github.com/WhizUs/go-opendistro) [![Docs](https://godoc.org/github.com/WhizUs/go-opendistro?status.svg)](https://godoc.org/github.com/WhizUs/go-opendistro)
 
 Go client for [OpenDistro](https://opendistro.github.io/for-elasticsearch/)
 
