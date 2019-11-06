@@ -46,6 +46,7 @@ We are checking pull request frequently and either merge it, request a change or
 Follow these steps before you submit a pull request:
 
 1. For the repository and create your branch from master
+2. Run `export GO111MODULE=on`and `go get` to download all dependencies
 2. Implement you feature, fix your bug and add tests if there is something new to test.
 3. Run `go fmt`
 4. Run `go test`

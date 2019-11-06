@@ -4,7 +4,9 @@ Go client for [OpenDistro](https://opendistro.github.io/for-elasticsearch/)
 
 ## Installation
 
-TODO
+    export GO111MODULE=on
+    go mod init
+    go get github.com/WhizUs/go-opendistro 
 
 ## Examples
 
