@@ -10,6 +10,7 @@ const (
 	RolesMappingEndpoint = "/_opendistro/_security/api/rolesmapping/"
 	ActiongroupEndpoint  = "/_opendistro/_security/api/actiongroups/"
 	TenantEndpoint       = "/_opendistro/_security/api/tenants/"
+	HealthEndpoint       = "/_opendistro/_security/health"
 )
 
 type Service struct {

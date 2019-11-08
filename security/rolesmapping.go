@@ -92,7 +92,7 @@ func (s *RolesmappingService) Delete(ctx context.Context, name string) error {
 func (s *RolesmappingService) Create(ctx context.Context, name string, roleMappingRelations *RoleMappingRelations) error {
 	endpoint := common.RolesMappingEndpoint + name
 
-	return s.Client.Modify(ctx, endpoint, http.MethodPut, &roleMappingRelations)
+	return s.Client.Modify(ctx, endpoint, http.MethodPut, roleMappingRelations)
 }
 
 //
@@ -101,7 +101,7 @@ func (s *RolesmappingService) Create(ctx context.Context, name string, roleMappi
 func (s *RolesmappingService) Update(ctx context.Context, name string, patches *[]common.Patch) error {
 	endpoint := common.RolesMappingEndpoint + name
 
-	return s.Client.Modify(ctx, endpoint, http.MethodPatch, &patches)
+	return s.Client.Modify(ctx, endpoint, http.MethodPatch, patches)
 }
 
 //

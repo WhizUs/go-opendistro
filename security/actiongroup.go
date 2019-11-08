@@ -97,7 +97,7 @@ func (s *ActiongroupService) Create(ctx context.Context, name string) error {
 func (s *ActiongroupService) Update(ctx context.Context, name string, patches *[]common.Patch) error {
 	endpoint := common.ActiongroupEndpoint + name
 
-	return s.Client.Modify(ctx, endpoint, http.MethodPatch, &patches)
+	return s.Client.Modify(ctx, endpoint, http.MethodPatch, patches)
 }
 
 //

@@ -106,7 +106,7 @@ func (s *RoleService) Delete(ctx context.Context, name string) error {
 func (s *RoleService) Create(ctx context.Context, name string, rolePermissions *RolePermissions) error {
 	endpoint := common.RolesEndpoint + name
 
-	return s.Client.Modify(ctx, endpoint, http.MethodPut, &rolePermissions)
+	return s.Client.Modify(ctx, endpoint, http.MethodPut, rolePermissions)
 }
 
 // Update a role
@@ -115,7 +115,7 @@ func (s *RoleService) Create(ctx context.Context, name string, rolePermissions *
 func (s *RoleService) Update(ctx context.Context, name string, patches *[]common.Patch) error {
 	endpoint := common.RolesEndpoint + name
 
-	return s.Client.Modify(ctx, endpoint, http.MethodPatch, &patches)
+	return s.Client.Modify(ctx, endpoint, http.MethodPatch, patches)
 }
 
 // Update multiple roles at once

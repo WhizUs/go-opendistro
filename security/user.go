@@ -96,7 +96,7 @@ func (s *UserService) Delete(ctx context.Context, name string) error {
 func (s *UserService) Create(ctx context.Context, name string, userCreate *UserCreate) error {
 	endpoint := common.UsersEndpoint + name
 
-	return s.Client.Modify(ctx, endpoint, http.MethodPut, &userCreate)
+	return s.Client.Modify(ctx, endpoint, http.MethodPut, userCreate)
 }
 
 // Update a user by name and providing an update patch
@@ -105,7 +105,7 @@ func (s *UserService) Create(ctx context.Context, name string, userCreate *UserC
 func (s *UserService) Update(ctx context.Context, name string, patches *[]common.Patch) error {
 	endpoint := common.UsersEndpoint + name
 
-	return s.Client.Modify(ctx, endpoint, http.MethodPatch, &patches)
+	return s.Client.Modify(ctx, endpoint, http.MethodPatch, patches)
 }
 
 // Update multiple users at once

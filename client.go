@@ -10,6 +10,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"github.com/WhizUs/go-opendistro/common"
 	"github.com/WhizUs/go-opendistro/security"
 	"github.com/hashicorp/go-retryablehttp"
@@ -50,6 +51,7 @@ type securityClient struct {
 	Rolesmapping security.RolesmappingServiceInterface
 	Actiongroups security.ActiongroupServiceInterface
 	Tenants      security.TenantServiceInterface
+	Health       security.HealthServiceInterface
 }
 
 func NewClient(config *ClientConfig) (*Client, error) {
@@ -91,21 +93,13 @@ func NewClient(config *ClientConfig) (*Client, error) {
 	c.common.Client = c
 
 	c.Security = securityClient{
-		//Users:        (*security.UserService)(&c.common),
 		Users:        (*security.UserService)(&c.common),
 		Roles:        (*security.RoleService)(&c.common),
 		Rolesmapping: (*security.RolesmappingService)(&c.common),
 		Actiongroups: (*security.ActiongroupService)(&c.common),
 		Tenants:      (*security.TenantService)(&c.common),
+		Health:       (*security.HealthService)(&c.common),
 	}
-
-	/*
-		c.Users = (*security.UserService)(&c.common)
-		c.Roles = (*security.RoleService)(&c.common)
-		c.Rolesmapping = (*security.RolesmappingService)(&c.common)
-		c.Actiongroups = (*security.ActiongroupService)(&c.common)
-		c.Tenants = (*security.TenantService)(&c.common)
-	*/
 
 	return c, nil
 }
@@ -147,10 +141,6 @@ func (c *Client) Do(ctx context.Context, reqBytes interface{}, endpoint string, 
 		return nil, err
 	}
 
-	if resp.StatusCode == 404 {
-		return nil, nil
-	}
-
 	defer func() {
 		err := resp.Body.Close()
 		if err != nil {
@@ -162,6 +152,23 @@ func (c *Client) Do(ctx context.Context, reqBytes interface{}, endpoint string, 
 
 	if err != nil {
 		return nil, err
+	}
+
+	switch resp.StatusCode {
+	case http.StatusNotFound:
+
+		var sr *common.StatusResponse
+
+		err = json.Unmarshal(body, &sr)
+		if err != nil {
+			return nil, err
+		}
+
+		if sr.Status != nil && *sr.Status == string(common.Status.Error) {
+			return nil, common.NewStatusError(*sr.Reason, *sr.InvalidKeys)
+		}
+	case http.StatusUnauthorized:
+		return nil, fmt.Errorf("unauthorized: %s", resp.Body)
 	}
 
 	return body, nil
@@ -198,8 +205,22 @@ func (c *Client) Modify(ctx context.Context, path string, method string, reqByte
 		return err
 	}
 
-	if sr.Status != nil && *sr.Status == string(common.Status.Error) {
-		return common.NewStatusError(*sr.Reason, *sr.InvalidKeys)
+	if sr.Status != nil &&
+		(*sr.Status == string(common.Status.Error) ||
+			*sr.Status == string(common.Status.NotFound)) {
+
+		if sr.InvalidKeys != nil {
+			if sr.Reason != nil {
+				return common.NewStatusError(*sr.Reason, *sr.InvalidKeys)
+			}
+			return common.NewStatusError(*sr.Message, *sr.InvalidKeys)
+		}
+
+		if sr.Reason != nil {
+			return common.NewStatusError(*sr.Reason, nil)
+		}
+
+		return common.NewStatusError(*sr.Message, nil)
 	}
 
 	return nil
