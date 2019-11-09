@@ -10,11 +10,12 @@ import "strings"
 type status string
 
 type statusList struct {
-	Error     status
-	Forbidden status
-	Created   status
-	Ok        status
-	NotFound  status
+	Error      status
+	Forbidden  status
+	Created    status
+	Ok         status
+	NotFound   status
+	BadRequest status
 }
 
 type StatusError struct {
@@ -22,11 +23,12 @@ type StatusError struct {
 }
 
 var Status = &statusList{
-	Error:     "error",
-	Forbidden: "FORBIDDEN",
-	Created:   "CREATED",
-	Ok:        "OK",
-	NotFound:  "NOT_FOUND",
+	Error:      "error",
+	Forbidden:  "FORBIDDEN",
+	Created:    "CREATED",
+	Ok:         "OK",
+	NotFound:   "NOT_FOUND",
+	BadRequest: "BAD_REQUEST",
 }
 
 type StatusResponse struct {

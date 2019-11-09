@@ -119,7 +119,7 @@ func (s *UserService) UpdateBatch(ctx context.Context, patches *[]common.Patch) 
 func (s *UserService) ChangePassword(ctx context.Context, name string, newPassword string) error {
 	patch := &[]common.Patch{
 		{
-			Op:   "replace",
+			Op:   "add",
 			Path: "/" + name,
 			Value: map[string]interface{}{
 				"password": newPassword,
@@ -127,5 +127,5 @@ func (s *UserService) ChangePassword(ctx context.Context, name string, newPasswo
 		},
 	}
 
-	return s.Update(ctx, name, patch)
+	return s.UpdateBatch(ctx, patch)
 }
