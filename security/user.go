@@ -24,6 +24,7 @@ type UserServiceInterface interface {
 type UserCreate struct {
 	Password     string            `json:"password,omitempty"`
 	BackendRoles []string          `json:"backend_roles,omitempty"`
+	Roles        []string          `json:"opendistro_security_roles"`
 	Attributes   map[string]string `json:"attributes,omitempty"`
 }
 
