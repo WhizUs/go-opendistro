@@ -11,7 +11,7 @@ import (
 )
 
 type PolicyServiceInterface interface {
-	Get(ctx context.Context, id string) (*PolicyResponse, error)
+	Get(ctx context.Context, id string) (*GetPolicyResponse, error)
 	Update(ctx context.Context, id string, policy Policy) (*PolicyResponse, error)
 	Create(ctx context.Context, id string, policy Policy) (*PolicyResponse, error)
 	Delete(ctx context.Context, name string) error
@@ -22,10 +22,10 @@ type PolicyService common.Service
 // Get a policy by id
 //
 // see: https://opendistro.github.io/for-elasticsearch-docs/docs/ism/api/#get-policy
-func (s *PolicyService) Get(ctx context.Context, id string) (*PolicyResponse, error) {
+func (s *PolicyService) Get(ctx context.Context, id string) (*GetPolicyResponse, error) {
 	endpoint := common.ISMPoliciesEndpoint + id
 
-	var response *PolicyResponse
+	var response *GetPolicyResponse
 
 	err := s.Client.Get(ctx, endpoint, &response)
 	if err != nil {
@@ -58,7 +58,11 @@ func (s *PolicyService) Update(ctx context.Context, id string, policy Policy) (*
 // see: https://opendistro.github.io/for-elasticsearch-docs/docs/ism/api/#create-policy
 func (s *PolicyService) Create(ctx context.Context, id string, policy Policy) (*PolicyResponse, error) {
 	endpoint := common.ISMPoliciesEndpoint + id
-	data, err := s.Client.Do(ctx, policy, endpoint, http.MethodPut)
+	data, err := s.Client.Do(ctx, struct {
+		Policy Policy
+	}{
+		Policy: policy,
+	}, endpoint, http.MethodPut)
 	if err != nil {
 		return nil, err
 	}
