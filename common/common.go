@@ -10,12 +10,14 @@ import (
 )
 
 const (
-	UsersEndpoint        = "/_opendistro/_security/api/internalusers/"
-	RolesEndpoint        = "/_opendistro/_security/api/roles/"
-	RolesMappingEndpoint = "/_opendistro/_security/api/rolesmapping/"
-	ActiongroupEndpoint  = "/_opendistro/_security/api/actiongroups/"
-	TenantEndpoint       = "/_opendistro/_security/api/tenants/"
-	HealthEndpoint       = "/_opendistro/_security/health"
+	UsersEndpoint                = "/_opendistro/_security/api/internalusers/"
+	RolesEndpoint                = "/_opendistro/_security/api/roles/"
+	RolesMappingEndpoint         = "/_opendistro/_security/api/rolesmapping/"
+	ActiongroupEndpoint          = "/_opendistro/_security/api/actiongroups/"
+	TenantEndpoint               = "/_opendistro/_security/api/tenants/"
+	HealthEndpoint               = "/_opendistro/_security/health"
+	ISMPoliciesEndpoint          = "/_opendistro/_ism/policies/"
+	IndexStateManagementEndpoint = "/_opendistro/_ism/"
 )
 
 type Service struct {

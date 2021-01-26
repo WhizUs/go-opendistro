@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/WhizUs/go-opendistro/common"
+	index_state_management "github.com/WhizUs/go-opendistro/index-state-management"
 	"github.com/WhizUs/go-opendistro/security"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/go-rootcerts"
@@ -43,6 +44,8 @@ type Client struct {
 	common common.Service
 
 	Security securityClient
+
+	IndexStateManagement indexStateManagementClient
 }
 
 type securityClient struct {
@@ -52,6 +55,11 @@ type securityClient struct {
 	Actiongroups security.ActiongroupServiceInterface
 	Tenants      security.TenantServiceInterface
 	Health       security.HealthServiceInterface
+}
+
+type indexStateManagementClient struct {
+	Policies index_state_management.PolicyServiceInterface
+	Indices  index_state_management.IndexServiceInterface
 }
 
 func NewClient(config *ClientConfig) (*Client, error) {
@@ -99,6 +107,11 @@ func NewClient(config *ClientConfig) (*Client, error) {
 		Actiongroups: (*security.ActiongroupService)(&c.common),
 		Tenants:      (*security.TenantService)(&c.common),
 		Health:       (*security.HealthService)(&c.common),
+	}
+
+	c.IndexStateManagement = indexStateManagementClient{
+		Policies: (*index_state_management.PolicyService)(&c.common),
+		Indices:  (*index_state_management.IndexService)(&c.common),
 	}
 
 	return c, nil
